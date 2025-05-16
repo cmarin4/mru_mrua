@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprende Gráficos de Movimiento MRU y MRUA</title>
+    <style>
+			body {
+			font-family: 'Comic Sans MS', cursive, sans-serif;
+			background-color: #f0f8ff;
+			margin: 0;
+			padding: 20px;
+			color: #333;
+		}
+		header {
+			background: linear-gradient(135deg, #4CAF50, #2E8B57);
+			color: white;
+			padding: 20px;
+			text-align: center;
+			border-radius: 15px;
+			margin-bottom: 20px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		}
+		h1 {
+			margin: 0;
+			font-size: 2.5em;
+			text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+		}
+		h2 {
+			color: #2E8B57;
+			border-bottom: 2px solid #4CAF50;
+			padding-bottom: 10px;
+			margin-top: 30px;
+		}
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+		}
+		.section {
+			background-color: white;
+			padding: 25px;
+			margin-bottom: 25px;
+			border-radius: 15px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+			transition: transform 0.3s;
+		}
+		.section:hover {
+			transform: translateY(-5px);
+		}
+		.graph-container {
+			display: flex;
+			justify-content: space-around;
+			flex-wrap: wrap;
+			margin: 25px 0;
+			gap: 20px;
+		}
+		.graph {
+			width: 45%;
+			min-width: 300px;
+			background: white;
+			padding: 15px;
+			border-radius: 10px;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+			text-align: center;
+		}
+		.graph-img {
+			max-width: 100%;
+			height: auto;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			margin: 10px 0;
+		}
+		.example {
+			background-color: #e6f7ff;
+			padding: 20px;
+			border-left: 5px solid #4CAF50;
+			margin: 20px 0;
+			border-radius: 0 15px 15px 0;
+		}
+		button {
+			background: linear-gradient(135deg, #4CAF50, #45a049);
+			color: white;
+			border: none;
+			padding: 12px 25px;
+			text-align: center;
+			font-size: 18px;
+			margin: 15px 0;
+			cursor: pointer;
+			border-radius: 8px;
+			transition: all 0.3s;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+		}
+		button:hover {
+			transform: scale(1.05);
+			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+		}
+		#quiz-container, #name-form {
+			display: none;
+		}
+		.question {
+			margin-bottom: 25px;
+			font-size: 1.2em;
+		}
+		.options {
+			margin-left: 20px;
+		}
+		.option {
+			margin: 10px 0;
+			padding: 12px;
+			background-color: #f8f8f8;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: all 0.2s;
+			border: 2px solid transparent;
+		}
+		.option:hover {
+			background-color: #e8e8e8;
+			border-color: #4CAF50;
+		}
+		.selected {
+			background-color: #d4edda;
+			border-color: #4CAF50;
+		}
+		.correct {
+			background-color: #d4edda;
+			border-color: #28a745;
+			color: #155724;
+		}
+		.incorrect {
+			background-color: #f8d7da;
+			border-color: #dc3545;
+			color: #721c24;
+		}
+		#result {
+			font-size: 1.3em;
+			font-weight: bold;
+			margin: 25px 0;
+			padding: 15px;
+			border-radius: 10px;
+			background-color: #f8f9fa;
+		}
+		.emoji {
+			font-size: 1.5em;
+			margin-right: 10px;
+		}
+		.video-container {
+			position: relative;
+			padding-bottom: 56.25%;
+			height: 0;
+			overflow: hidden;
+			margin: 25px 0;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		}
+		.video-container iframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+		.simulator-btn {
+			display: block;
+			width: 250px;
+			margin: 25px auto;
+			text-align: center;
+			font-size: 1.1em;
+		}
+		.progress-bar {
+			width: 100%;
+			background-color: #e0e0e0;
+			border-radius: 10px;
+			margin: 25px 0;
+			height: 25px;
+			overflow: hidden;
+		}
+		.progress {
+			height: 100%;
+			background: linear-gradient(90deg, #4CAF50, #2E8B57);
+			width: 0%;
+			transition: width 0.5s ease;
+		}
+		.highlight {
+			background-color: #fffacd;
+			padding: 3px 6px;
+			border-radius: 4px;
+			font-weight: bold;
+		}
+		.interactive-question {
+			margin: 30px 0;
+			padding: 20px;
+			background-color: #f8f9fa;
+			border-radius: 10px;
+			border-left: 5px solid #4CAF50;
+		}
+		.feedback {
+			padding: 15px;
+			margin-top: 15px;
+			border-radius: 8px;
+			display: none;
+		}
+		.correct-feedback {
+			background-color: #d4edda;
+			border-left: 5px solid #28a745;
+		}
+		.incorrect-feedback {
+			background-color: #f8d7da;
+			border-left: 5px solid #dc3545;
+		}
+		.svg-container {
+			width: 100%;
+			max-width: 500px;
+			margin: 20px auto;
+		}
+		.tabs {
+			display: flex;
+			margin-bottom: 20px;
+			border-bottom: 2px solid #4CAF50;
+		}
+		.tab {
+			padding: 10px 20px;
+			cursor: pointer;
+			background-color: #f8f8f8;
+			border-radius: 5px 5px 0 0;
+			margin-right: 5px;
+			transition: all 0.3s;
+		}
+		.tab.active {
+			background-color: #4CAF50;
+			color: white;
+			font-weight: bold;
+		}
+		.tab-content {
+			display: none;
+			padding: 20px;
+			background-color: white;
+			border-radius: 0 0 5px 5px;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+		}
+		.tab-content.active {
+			display: block;
+		}
+		.definition-card {
+			background: white;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+			margin: 20px 0;
+			border-left: 5px solid #4CAF50;
+		}
+		.definition-card h3 {
+			color: #2E8B57;
+			margin-top: 0;
+		}
+		#name-form {
+			text-align: center;
+			padding: 30px;
+		}
+		#name-form input {
+			padding: 12px;
+			font-size: 16px;
+			border: 2px solid #4CAF50;
+			border-radius: 8px;
+			width: 80%;
+			max-width: 400px;
+			margin: 15px 0;
+		}
+		.credits {
+			text-align: center;
+			margin-top: 40px;
+			font-size: 0.9em;
+			color: #666;
+		}
+		.credits img {
+			height: 20px;
+			vertical-align: middle;
+			margin-left: 5px;
+		}
+    
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="emoji">📊</span> Aprende Gráficos de Movimiento MRU y MRUA</h1>
+            <p>¡Descubre la física del movimiento de forma divertida! <span class="emoji">🚗💨</span></p>
+        </header>
+
+        <div class="section" id="theory-section">
+            <h2><span class="emoji">📚</span> Conceptos Fundamentales</h2>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="openTab('mru-tab')">MRU</div>
+                <div class="tab" onclick="openTab('mrua-tab')">MRUA</div>
+                <div class="tab" onclick="openTab('graphs-tab')">Gráficos</div>
+            </div>
+            
+            <div id="mru-tab" class="tab-content active">
+                <div class="definition-card">
+                    <h3><span class="emoji">🚶‍♂️</span> MRU - Movimiento Rectilíneo Uniforme</h3>
+                    <p>Es cuando un objeto se mueve en línea recta <span class="highlight">a velocidad constante</span>, sin acelerar ni frenar.</p>
+                    <p><strong>Fórmula principal:</strong></p>
+                    <p style="text-align: center; font-size: 1.5em;">d = v × t</p>
+                    <p><strong>Donde:</strong></p>
+                    <ul>
+                        <li>d = distancia recorrida (metros, kilómetros)</li>
+                        <li>v = velocidad (m/s, km/h)</li>
+                        <li>t = tiempo (segundos, horas)</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <h3><span class="emoji">🔍</span> Ejemplo de MRU en la vida real</h3>
+                    <p>Imagina un <strong>tren de juguete</strong> que se mueve sobre una pista recta con una velocidad constante de 0.5 m/s.</p>
+                    <p><strong>Pregunta:</strong> ¿Qué distancia habrá recorrido después de 10 segundos?</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>Usamos la fórmula d = v × t</p>
+                    <p>d = 0.5 m/s × 10 s = <span class="highlight">5 metros</span></p>
+                    <p>El tren habrá recorrido 5 metros en línea recta.</p>
+                </div>
+                
+                <div class="interactive-question">
+                    <h3><span class="emoji">💡</span> Practiquemos juntos</h3>
+                    <p>Un automóvil viaja por una carretera recta a 60 km/h durante 2 horas. ¿Qué distancia recorre?</p>
+                    <div class="options">
+                        <div class="option" onclick="checkInteractiveAnswer(this, 0, '¡Correcto! 60 km/h × 2 h = 120 km', 'La distancia en MRU se calcula multiplicando velocidad por tiempo. 60 × 2 = 120 km')">120 km</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'Recuerda: distancia = velocidad × tiempo. 60 × 2 = 120 km')">60 km</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'El tiempo es 2 horas, no 1. 60 × 2 = 120 km')">30 km</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'Revisa tus cálculos. 60 × 2 = 120 km')">180 km</div>
+                    </div>
+                    <div id="feedback1" class="feedback"></div>
+                </div>
+            </div>
+            
+            <div id="mrua-tab" class="tab-content">
+                <div class="definition-card">
+                    <h3><span class="emoji">🚀</span> MRUA - Movimiento Rectilíneo Uniformemente Acelerado</h3>
+                    <p>Es cuando un objeto se mueve en línea recta con <span class="highlight">aceleración constante</span>, aumentando o disminuyendo su velocidad uniformemente.</p>
+                    <p><strong>Fórmulas principales:</strong></p>
+                    <p style="text-align: center; font-size: 1.3em;">
+                        v = v₀ + a × t<br>
+                        d = v₀ × t + ½ × a × t²
+                    </p>
+                    <p><strong>Donde:</strong></p>
+                    <ul>
+                        <li>v = velocidad final (m/s)</li>
+                        <li>v₀ = velocidad inicial (m/s)</li>
+                        <li>a = aceleración (m/s²)</li>
+                        <li>t = tiempo (s)</li>
+                        <li>d = distancia recorrida (m)</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <h3><span class="emoji">🔍</span> Ejemplo de MRUA en la vida real</h3>
+                    <p>Un <strong>cohete de juguete</strong> acelera desde el reposo (0 m/s) a 20 m/s en 5 segundos.</p>
+                    <p><strong>Pregunta 1:</strong> ¿Cuál es su aceleración?</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>Usamos la fórmula a = (v - v₀) / t</p>
+                    <p>a = (20 m/s - 0 m/s) / 5 s = <span class="highlight">4 m/s²</span></p>
+                    
+                    <p><strong>Pregunta 2:</strong> ¿Qué distancia recorrió durante esos 5 segundos?</p>
+                    <p><strong>Solución:</strong></p>
+                    <p>Usamos d = v₀ × t + ½ × a × t²</p>
+                    <p>d = 0 × 5 + ½ × 4 × (5)² = 0 + 2 × 25 = <span class="highlight">50 metros</span></p>
+                </div>
+                
+                <div class="interactive-question">
+                    <h3><span class="emoji">💡</span> Practiquemos juntos</h3>
+                    <p>Un automóvil que viaja a 10 m/s frena con una aceleración constante de -2 m/s². ¿Cuál será su velocidad después de 3 segundos?</p>
+                    <div class="options">
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'La aceleración es negativa (frenado), por lo que la velocidad debe disminuir')">16 m/s</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 0, '¡Correcto!', 'v = 10 m/s + (-2 m/s²) × 3 s = 4 m/s. La velocidad disminuye porque está frenando')">4 m/s</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'La velocidad cambia porque hay aceleración (negativa en este caso)')">10 m/s</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'Recuerda usar la fórmula v = v₀ + a×t con a negativa')">6 m/s</div>
+                    </div>
+                    <div id="feedback2" class="feedback"></div>
+                </div>
+            </div>
+            
+            <div id="graphs-tab" class="tab-content">
+                <h3><span class="emoji">📈</span> Interpretación de Gráficos</h3>
+                
+                <div class="graph-container">
+                    <div class="graph">
+                        <h4>Posición vs. Tiempo (x-t)</h4>
+                        <div class="svg-container">
+                            <svg viewBox="0 0 300 200" class="graph-img">
+                                <!-- Ejes -->
+                                <line x1="20" y1="180" x2="280" y2="180" stroke="black" stroke-width="2"/>
+                                <line x1="20" y1="180" x2="20" y2="20" stroke="black" stroke-width="2"/>
+                                <text x="290" y="185" font-size="12">Tiempo (s)</text>
+                                <text x="10" y="15" font-size="12">Posición (m)</text>
+                                
+                                <!-- MRU -->
+                                <line x1="30" y1="170" x2="270" y2="30" stroke="#4CAF50" stroke-width="3" stroke-dasharray="5,5"/>
+                                <text x="240" y="45" font-size="12" fill="#4CAF50">MRU</text>
+                                
+                                <!-- MRUA -->
+                                <path d="M 30 180 Q 150 100 270 50" stroke="#FF5722" stroke-width="3" fill="none"/>
+                                <text x="240" y="70" font-size="12" fill="#FF5722">MRUA</text>
+                            </svg>
+                        </div>
+                        <p><strong>MRU:</strong> Línea recta (pendiente = velocidad)</p>
+                        <p><strong>MRUA:</strong> Curva (parábola)</p>
+                    </div>
+                    
+                    <div class="graph">
+                        <h4>Velocidad vs. Tiempo (v-t)</h4>
+                        <div class="svg-container">
+                            <svg viewBox="0 0 300 200" class="graph-img">
+                                <!-- Ejes -->
+                                <line x1="20" y1="180" x2="280" y2="180" stroke="black" stroke-width="2"/>
+                                <line x1="20" y1="180" x2="20" y2="20" stroke="black" stroke-width="2"/>
+                                <text x="290" y="185" font-size="12">Tiempo (s)</text>
+                                <text x="10" y="15" font-size="12">Velocidad (m/s)</text>
+                                
+                                <!-- MRU -->
+                                <line x1="30" y1="100" x2="270" y2="100" stroke="#4CAF50" stroke-width="3" stroke-dasharray="5,5"/>
+                                <text x="240" y="105" font-size="12" fill="#4CAF50">MRU</text>
+                                
+                                <!-- MRUA acelerando -->
+                                <line x1="30" y1="170" x2="270" y2="30" stroke="#FF5722" stroke-width="3"/>
+                                <text x="240" y="45" font-size="12" fill="#FF5722">MRUA (acelerando)</text>
+                            </svg>
+                        </div>
+                        <p><strong>MRU:</strong> Línea horizontal (velocidad constante)</p>
+                        <p><strong>MRUA:</strong> Línea inclinada (pendiente = aceleración)</p>
+                    </div>
+                </div>
+                
+                <div class="interactive-question">
+                    <h3><span class="emoji">💡</span> Identifica el gráfico</h3>
+                    <p>Observa este gráfico de posición-tiempo. ¿Qué tipo de movimiento representa?</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 300 200" style="background: #f8f8f8; border-radius: 8px;">
+                            <line x1="20" y1="180" x2="280" y2="180" stroke="black" stroke-width="2"/>
+                            <line x1="20" y1="180" x2="20" y2="20" stroke="black" stroke-width="2"/>
+                            <path d="M 30 180 Q 150 100 270 50" stroke="#4CAF50" stroke-width="3" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="options">
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'El MRU sería una línea recta, no una curva')">MRU</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 0, '¡Correcto!', 'La curva indica que hay aceleración (MRUA)')">MRUA</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'Es un movimiento rectilíneo, no circular')">Movimiento circular</div>
+                        <div class="option" onclick="checkInteractiveAnswer(this, 1, 'Incorrecto', 'Claramente hay movimiento (la posición cambia)')">Reposo</div>
+                    </div>
+                    <div id="feedback3" class="feedback"></div>
+                </div>
+            </div>
+            
+            <div class="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Explicación de MRU y MRUA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            
+            <button class="simulator-btn" onclick="window.open('https://phet.colorado.edu/es/simulation/moving-man', '_blank')">
+                <span class="emoji">🔬</span> Abrir Simulador de Movimiento PhET
+            </button>
+        </div>
+
+        <div class="section">
+            <button id="start-quiz-btn" onclick="showNameForm()">
+                <span class="emoji">📝</span> ¡Comencemos el Examen Final! (10 preguntas)
+            </button>
+            
+            <div id="name-form">
+                <h2><span class="emoji">👤</span> Por favor ingresa tu nombre</h2>
+                <input type="text" id="student-name" placeholder="Escribe tu nombre completo">
+                <button onclick="startQuiz()">Comenzar Examen <span class="emoji">🚀</span></button>
+            </div>
+            
+            <div id="quiz-container">
+                <h2><span class="emoji">📝</span> Examen Final</h2>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <div id="question-container"></div>
+                <div id="options-container"></div>
+                <button id="next-btn" onclick="nextQuestion()" style="display: none;">Siguiente <span class="emoji">▶️</span></button>
+                <div id="result"></div>
+            </div>
+        </div>
+
+        <div class="credits">
+            <p>Idea: Juan Sebastián Marín Rodríguez</p>
+            <p>Desarrollado con <span class="emoji">❤️</span> y DeepSeek <img src="https://deepseek.com/favicon.ico" alt="DeepSeek Logo"></p>
+        </div>
+    </div>
+
+    <script>
+		// Banco de preguntas mejorado (20 preguntas)
+const questions = [
+            {
+                question: "¿Cómo es el gráfico de posición-tiempo en un MRU?",
+                options: [
+                    "Línea recta horizontal",
+                    "Línea recta inclinada",
+                    "Curva parabólica",
+                    "Línea quebrada"
+                ],
+                correct: 1,
+                explanation: "En MRU la posición cambia uniformemente con el tiempo, por eso es una línea recta inclinada ↗️"
+            },
+            {
+                question: "En un MRUA, ¿qué representa la pendiente del gráfico velocidad-tiempo?",
+                options: [
+                    "La distancia recorrida",
+                    "La aceleración",
+                    "La velocidad inicial",
+                    "El tiempo total"
+                ],
+                correct: 1,
+                explanation: "La pendiente en v-t representa la aceleración 📈"
+            },
+            {
+                question: "Si un auto recorre 120 km en 2 horas a velocidad constante, ¿cuál es su velocidad?",
+                options: [
+                    "60 m/s",
+                    "60 km/h",
+                    "240 km/h",
+                    "30 km/h"
+                ],
+                correct: 1,
+                explanation: "Velocidad = Distancia/Tiempo = 120km/2h = 60 km/h 🚗"
+            },
+            {
+                question: "¿Qué unidad se usa para medir la aceleración?",
+                options: [
+                    "m/s",
+                    "km/h",
+                    "m/s²",
+                    "Ninguna de las anteriores"
+                ],
+                correct: 2,
+                explanation: "La aceleración se mide en metros por segundo al cuadrado (m/s²) ⏱️"
+            },
+            {
+                question: "Un objeto en MRU tiene aceleración igual a:",
+                options: [
+                    "1 m/s²",
+                    "0 m/s²",
+                    "Variable",
+                    "Depende de la velocidad"
+                ],
+                correct: 1,
+                explanation: "En MRU la velocidad es constante, por lo que la aceleración es cero 0️⃣"
+            },
+            {
+                question: "¿Qué tipo de movimiento muestra este gráfico? (imagen de línea recta en v-t)",
+                options: [
+                    "MRU",
+                    "MRUA acelerando",
+                    "MRUA frenando",
+                    "Ninguno"
+                ],
+                correct: 0,
+                explanation: "Una línea horizontal en v-t indica velocidad constante (MRU) ↔️"
+            },
+            {
+                question: "Si un gráfico x-t es una parábola, el movimiento es:",
+                options: [
+                    "MRU",
+                    "MRUA",
+                    "Circular",
+                    "No se puede determinar"
+                ],
+                correct: 1,
+                explanation: "Las parábolas en x-t indican MRUA (aceleración constante) 📈"
+            },
+            {
+                question: "Un ciclista pasa de 10 m/s a 20 m/s en 5 segundos. Su aceleración es:",
+                options: [
+                    "1 m/s²",
+                    "2 m/s²",
+                    "5 m/s²",
+                    "0.5 m/s²"
+                ],
+                correct: 1,
+                explanation: "a = Δv/Δt = (20-10)/5 = 2 m/s² 🚴‍♂️"
+            },
+            {
+                question: "En un MRU, el área bajo la curva en un gráfico v-t representa:",
+                options: [
+                    "La aceleración",
+                    "La distancia recorrida",
+                    "El tiempo total",
+                    "La velocidad media"
+                ],
+                correct: 1,
+                explanation: "El área bajo v-t siempre es la distancia recorrida 📏"
+            },
+            {
+                question: "¿Cuál de estos es un ejemplo de MRU?",
+                options: [
+                    "Un auto frenando en un semáforo",
+                    "Un avión despegando",
+                    "Un tren moviéndose a velocidad constante",
+                    "Una pelota cayendo"
+                ],
+                correct: 2,
+                explanation: "Solo el tren a velocidad constante es MRU 🚂"
+            },
+            {
+                question: "Si un objeto tiene velocidad positiva pero aceleración negativa:",
+                options: [
+                    "Está acelerando",
+                    "Está frenando",
+                    "Se mueve hacia atrás",
+                    "Está en reposo"
+                ],
+                correct: 1,
+                explanation: "Aceleración opuesta a velocidad significa que está frenando 🛑"
+            },
+            {
+                question: "¿Qué gráfico mostraría una línea recta inclinada hacia abajo en v-t?",
+                options: [
+                    "MRU",
+                    "MRUA acelerando",
+                    "MRUA frenando",
+                    "Ninguno"
+                ],
+                correct: 2,
+                explanation: "Línea hacia abajo en v-t indica frenado (aceleración negativa) ↘️"
+            },
+            {
+                question: "Un auto recorre 300 metros en 15 segundos a velocidad constante. ¿Su velocidad es?",
+                options: [
+                    "20 km/h",
+                    "20 m/s",
+                    "72 km/h",
+                    "45 m/s"
+                ],
+                correct: 1,
+                explanation: "v = d/t = 300m/15s = 20 m/s (que equivale a 72 km/h) 🚗💨"
+            },
+            {
+                question: "En un MRUA con aceleración positiva, la velocidad:",
+                options: [
+                    "Aumenta con el tiempo",
+                    "Disminuye con el tiempo",
+                    "Permanece constante",
+                    "Cambia de dirección"
+                ],
+                correct: 0,
+                explanation: "Aceleración positiva aumenta la velocidad ↗️"
+            },
+            {
+                question: "¿Qué representa la pendiente en un gráfico x-t?",
+                options: [
+                    "Aceleración",
+                    "Velocidad",
+                    "Distancia",
+                    "Tiempo"
+                ],
+                correct: 1,
+                explanation: "La pendiente en x-t es la velocidad 📐"
+            },
+            {
+                question: "Un objeto en caída libre (sin aire) tiene:",
+                options: [
+                    "MRU",
+                    "MRUA con a = 9.8 m/s²",
+                    "MRUA con a = -9.8 m/s²",
+                    "Velocidad constante"
+                ],
+                correct: 1,
+                explanation: "Caída libre es MRUA con a = g = 9.8 m/s² hacia abajo 🍎"
+            },
+            {
+                question: "Si en 4 segundos la velocidad cambia de 8 m/s a 16 m/s, la aceleración es:",
+                options: [
+                    "2 m/s²",
+                    "4 m/s²",
+                    "6 m/s²",
+                    "8 m/s²"
+                ],
+                correct: 0,
+                explanation: "a = Δv/Δt = (16-8)/4 = 2 m/s² ⏱️"
+            },
+            {
+                question: "¿Qué gráfico siempre es una línea horizontal en MRU?",
+                options: [
+                    "x-t",
+                    "v-t",
+                    "a-t",
+                    "Ninguno"
+                ],
+                correct: 2,
+                explanation: "En MRU, a-t siempre es cero (línea horizontal) ↔️"
+            },
+            {
+                question: "Un móvil con MRU recorre 60 km en 0.5 horas. Su velocidad en m/s es:",
+                options: [
+                    "30 m/s",
+                    "120 m/s",
+                    "33.33 m/s",
+                    "16.67 m/s"
+                ],
+                correct: 2,
+                explanation: "60 km = 60,000 m; 0.5 h = 1800 s; v = 60,000/1800 ≈ 33.33 m/s 🚘"
+            },
+            {
+                question: "En un gráfico v-t, ¿qué representa el área bajo la curva?",
+                options: [
+                    "Aceleración",
+                    "Velocidad media",
+                    "Distancia recorrida",
+                    "Tiempo total"
+                ],
+                correct: 2,
+                explanation: "El área bajo v-t siempre es la distancia 📏"
+            }
+        ];
+
+// Variables del quiz
+let currentQuestionIndex = 0;
+let selectedQuestions = [];
+let score = 0;
+let userAnswers = [];
+let studentName = "";
+
+// Mostrar formulario de nombre
+function showNameForm() {
+    document.getElementById('start-quiz-btn').style.display = 'none';
+    document.getElementById('name-form').style.display = 'block';
+}
+
+// Función para iniciar el quiz
+function startQuiz() {
+    studentName = document.getElementById('student-name').value.trim();
+    if (!studentName) {
+        alert("Por favor ingresa tu nombre para comenzar el examen.");
+        return;
+    }
+
+    document.getElementById('theory-section').style.display = 'none';
+    document.getElementById('name-form').style.display = 'none';
+    document.getElementById('quiz-container').style.display = 'block';
+    
+    // Seleccionar 10 preguntas aleatorias de 20
+    selectedQuestions = getRandomQuestions(10);
+    currentQuestionIndex = 0;
+    score = 0;
+    userAnswers = [];
+    
+    showQuestion();
+}
+
+// Obtener preguntas aleatorias sin repetir (10 de 20)
+function getRandomQuestions(n) {
+    // Hacer una copia del array original
+    const copy = [...questions];
+    const result = [];
+    
+    for (let i = 0; i < n; i++) {
+        const randomIndex = Math.floor(Math.random() * copy.length);
+        result.push(copy[randomIndex]);
+        copy.splice(randomIndex, 1); // Eliminar para no repetir
+    }
+    
+    return result;
+}
+
+
+			// Mostrar pregunta actual
+			function showQuestion() {
+				const questionObj = selectedQuestions[currentQuestionIndex];
+				const questionContainer = document.getElementById('question-container');
+				const optionsContainer = document.getElementById('options-container');
+				
+				
+				
+				
+				// Actualizar barra de progreso
+				document.getElementById('progress-bar').style.width = `${(currentQuestionIndex / selectedQuestions.length) * 100}%`;
+				
+				// Mostrar pregunta
+				questionContainer.innerHTML = `
+					<div class="question">
+						<h3>Pregunta ${currentQuestionIndex + 1}/${selectedQuestions.length}</h3>
+						<p>${questionObj.question}</p>
+					</div>
+				`;
+				
+				// Mostrar opciones
+				optionsContainer.innerHTML = '';
+				questionObj.options.forEach((option, index) => {
+					const optionElement = document.createElement('div');
+					optionElement.className = 'option';
+					optionElement.innerHTML = option;
+					optionElement.onclick = () => selectOption(index);
+					optionsContainer.appendChild(optionElement);
+				});
+				
+				document.getElementById('next-btn').style.display = 'none';
+				document.getElementById('result').innerHTML = '';
+			}
+
+			// Seleccionar opción
+			function selectOption(index) {
+				const options = document.querySelectorAll('.option');
+				options.forEach(option => option.classList.remove('selected'));
+				options[index].classList.add('selected');
+				
+				document.getElementById('next-btn').style.display = 'inline-block';
+				userAnswers[currentQuestionIndex] = index;
+			}
+
+
+
+
+			// Siguiente pregunta o mostrar resultados
+			// Siguiente pregunta o mostrar resultados
+			
+			
+			
+
+
+
+			
+			// Siguiente pregunta o mostrar resultados
+			function nextQuestion() {
+				const selectedOption = userAnswers[currentQuestionIndex];
+				const correctOption = selectedQuestions[currentQuestionIndex].correct;
+				
+				// Verificar respuesta solo si se ha seleccionado una opción
+				if (typeof selectedOption !== 'undefined') {
+					const options = document.querySelectorAll('.option');
+					options.forEach((option, index) => {
+						option.classList.remove('correct', 'incorrect');
+						if (index === correctOption) {
+							option.classList.add('correct');
+						} else if (index === selectedOption && index !== correctOption) {
+							option.classList.add('incorrect');
+						}
+						option.onclick = null; // Deshabilitar más selecciones
+					});
+					
+					// Actualizar puntaje
+					if (selectedOption === correctOption) {
+						score++;
+					}
+					
+					// Mostrar explicación detallada
+					document.getElementById('result').innerHTML = `
+						<div class="feedback" style="margin: 15px 0; padding: 15px; border-radius: 8px; background-color: ${
+							selectedOption === correctOption ? '#d4edda' : '#f8d7da'
+						}; border-left: 5px solid ${
+							selectedOption === correctOption ? '#28a745' : '#dc3545'
+						};">
+							<p style="font-weight: bold; color: ${
+								selectedOption === correctOption ? '#155724' : '#721c24'
+							};">${selectedOption === correctOption ? '✅ Correcto!' : '❌ Incorrecto'}</p>
+							<p>${selectedQuestions[currentQuestionIndex].explanation}</p>
+						</div>
+					`;
+				}
+				
+				// Preparar siguiente pregunta o mostrar resultados
+				currentQuestionIndex++;
+				if (currentQuestionIndex < selectedQuestions.length) {
+					document.getElementById('next-btn').onclick = nextQuestion;
+					document.getElementById('next-btn').textContent = 'Siguiente ▶️';
+					showQuestion();
+				} else {
+					showResults();
+				}
+			}
+			
+			
+			
+						
+						
+						
+
+
+
+
+
+
+
+						
+						
+						
+		
+
+			// Mostrar resultados finales
+			function showResults() {
+				document.getElementById('progress-bar').style.width = '100%';
+				document.getElementById('question-container').innerHTML = `
+					<h3>Examen Completado, ${studentName}! 🎉</h3>
+					<p>Respuestas correctas: <strong>${score}/${selectedQuestions.length}</strong></p>
+					<p>Porcentaje: <strong>${Math.round((score / selectedQuestions.length) * 100)}%</strong></p>
+				`;
+				
+				let emoji = '';
+				if (score === selectedQuestions.length) {
+					emoji = '🏆 ¡Perfecto! Eres un genio de la física!';
+				} else if (score >= selectedQuestions.length * 0.7) {
+					emoji = '👍 ¡Buen trabajo! Casi lo logras perfecto.';
+				} else if (score >= selectedQuestions.length * 0.5) {
+					emoji = '😊 No está mal, pero puedes mejorar.';
+				} else {
+					emoji = '🤔 Quizás necesites repasar un poco más.';
+				}
+				
+				document.getElementById('result').innerHTML = `
+					<div style="padding: 20px; background-color: #f8f9fa; border-radius: 10px;">
+						<p style="font-size: 1.2em;">${emoji}</p>
+						<button onclick="location.reload()">Volver a intentar 🔄</button>
+					</div>
+				`;
+				
+				document.getElementById('options-container').innerHTML = '';
+				document.getElementById('next-btn').style.display = 'none';
+				
+				// Enviar resultados a Google Sheets
+				sendResultsToGoogleSheets();
+			}
+
+			
+			function sendResultsToGoogleSheets() {
+    const scriptURL = 
+    'https://script.google.com/macros/s/AKfycbymBViHqezqZcaHRs6qS1d2YUs9PWiJwDlOO-VesLXRTOEAL0QcOe5QVcv1yHpN41Fftw/exec';
+    const now = new Date();
+
+    // Verificación de variables
+    console.log('DEBUG: studentName =', studentName);
+    console.log('DEBUG: score =', score);
+    console.log('DEBUG: selectedQuestions =', selectedQuestions);
+
+    if (typeof studentName === 'undefined' || typeof score === 'undefined' || !Array.isArray(selectedQuestions)) {
+        alert('Error: Faltan datos necesarios para enviar a Google Sheets.');
+        console.error('Variables no definidas correctamente');
+        return;
+    }
+
+    const data = {
+        nombre: studentName,
+        fecha: now.toLocaleDateString('es-ES'),
+        hora: now.toLocaleTimeString('es-ES'),
+        puntaje: `${score}/${selectedQuestions.length}`,
+        porcentaje: `${Math.round((score / selectedQuestions.length) * 100)}%`
+    };
+
+    console.log('DEBUG: Data to send =', data);
+
+    // Crear FormData en vez de URLSearchParams
+    const formData = new FormData();
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+
+    fetch(scriptURL, {
+        method: 'POST',
+        body: formData,
+		mode: 'no-cors' 
+    })
+    .then(response => {
+        console.log('DEBUG: Response status =', response.status);
+        if (!response.ok) throw new Error('Error en la red: ' + response.status);
+        return response.text();
+    })
+    .then(text => {
+        console.log('DEBUG: Server response =', text);
+        alert('¡Resultados enviados correctamente!');
+    })
+    .catch(error => {
+        console.error('Error al enviar datos:', error);
+        alert('Los resultados no se pudieron guardar, pero el examen se completó correctamente.');
+    });
+}
+
+
+
+			// Función para abrir pestañas
+			function openTab(tabId) {
+				// Oculta todos los contenidos de pestañas
+				document.querySelectorAll('.tab-content').forEach(tab => {
+					tab.classList.remove('active');
+				});
+				
+				// Desactiva todas las pestañas
+				document.querySelectorAll('.tab').forEach(tab => {
+					tab.classList.remove('active');
+				});
+				
+				// Activa la pestaña seleccionada
+				document.getElementById(tabId).classList.add('active');
+				event.currentTarget.classList.add('active');
+			}
+
+			// Función para verificar respuestas interactivas
+			function checkInteractiveAnswer(element, isCorrect, shortFeedback, detailedExplanation) {
+				const feedback = element.parentElement.nextElementSibling;
+				
+				// Resetear todas las opciones
+				const options = element.parentElement.querySelectorAll('.option');
+				options.forEach(opt => {
+					opt.onclick = null;
+					opt.classList.remove('correct', 'incorrect');
+				});
+				
+				if (isCorrect === 0) {
+					element.classList.add('correct');
+					feedback.innerHTML = `
+						<div class="correct-feedback">
+							<p>${shortFeedback}</p>
+							<p>${detailedExplanation}</p>
+						</div>
+					`;
+				} else {
+					element.classList.add('incorrect');
+					// Marcar también la correcta
+					options.forEach(opt => {
+						if (opt.textContent === element.parentElement.querySelectorAll('.option')[questions[currentQuestionIndex].correct].textContent) {
+							opt.classList.add('correct');
+						}
+					});
+					feedback.innerHTML = `
+						<div class="incorrect-feedback">
+							<p>${shortFeedback}</p>
+							<p>${detailedExplanation}</p>
+						</div>
+					`;
+				}
+				
+				feedback.style.display = 'block';
+			}
+
+			// Configuración inicial
+			document.addEventListener('DOMContentLoaded', function() {
+				// Activar la primera pestaña por defecto
+				document.querySelector('.tab').click();
+			});
+	</script>
+</body>
+</html>
