@@ -451,7 +451,7 @@
             </div>
             
             <div class="video-container">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Explicación de MRU y MRUA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/sYicx8PyPGI" title="Explicación de MRU y MRUA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
             
             <button class="simulator-btn" onclick="window.open('https://phet.colorado.edu/es/simulation/moving-man', '_blank')">
@@ -954,8 +954,7 @@ function getRandomQuestions(n) {
 
     fetch(scriptURL, {
         method: 'POST',
-        body: formData,
-		mode: 'no-cors' 
+        body: formData 
     })
     .then(response => {
         console.log('DEBUG: Response status =', response.status);
