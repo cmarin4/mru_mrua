@@ -920,57 +920,42 @@ function getRandomQuestions(n) {
 			}
 
 			
-			function sendResultsToGoogleSheets() {
-    const scriptURL = 
-    'https://script.google.com/macros/s/AKfycbymBViHqezqZcaHRs6qS1d2YUs9PWiJwDlOO-VesLXRTOEAL0QcOe5QVcv1yHpN41Fftw/exec';
+function sendResultsToGoogleSheets() {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbymBViHqezqZcaHRs6qS1d2YUs9PWiJwDlOO-VesLXRTOEAL0QcOe5QVcv1yHpN41Fftw/exec';
+
     const now = new Date();
 
-    // Verificación de variables
-    console.log('DEBUG: studentName =', studentName);
-    console.log('DEBUG: score =', score);
-    console.log('DEBUG: selectedQuestions =', selectedQuestions);
+    // Asegúrate de que estas variables existan
+    const studentName = document.getElementById('studentName').value || 'Anónimo';
+    const score = window.score || 0;
+    const selectedQuestions = window.selectedQuestions || [];
 
-    if (typeof studentName === 'undefined' || typeof score === 'undefined' || !Array.isArray(selectedQuestions)) {
-        alert('Error: Faltan datos necesarios para enviar a Google Sheets.');
-        console.error('Variables no definidas correctamente');
-        return;
-    }
-
-    const data = {
-        nombre: studentName,
-        fecha: now.toLocaleDateString('es-ES'),
-        hora: now.toLocaleTimeString('es-ES'),
-        puntaje: `${score}/${selectedQuestions.length}`,
-        porcentaje: `${Math.round((score / selectedQuestions.length) * 100)}%`
-    };
-
-    console.log('DEBUG: Data to send =', data);
-
-    // Crear FormData en vez de URLSearchParams
+    // Crear el objeto FormData
     const formData = new FormData();
-    for (const key in data) {
-        formData.append(key, data[key]);
-    }
+    formData.append('nombre', studentName);
+    formData.append('fecha', now.toLocaleDateString('es-ES'));
+    formData.append('hora', now.toLocaleTimeString('es-ES'));
+    formData.append('puntaje', `${score}/${selectedQuestions.length}`);
+    formData.append('porcentaje', `${Math.round((score / selectedQuestions.length) * 100)}%`);
 
+    // Enviar datos a Google Sheets vía Apps Script
     fetch(scriptURL, {
         method: 'POST',
-        body: formData 
+        body: formData
     })
     .then(response => {
-        console.log('DEBUG: Response status =', response.status);
-        if (!response.ok) throw new Error('Error en la red: ' + response.status);
+        if (!response.ok) throw new Error(`Error en la respuesta: ${response.status}`);
         return response.text();
     })
     .then(text => {
-        console.log('DEBUG: Server response =', text);
-        alert('¡Resultados enviados correctamente!');
+        console.log('Respuesta del servidor:', text);
+        alert('✅ Resultados enviados correctamente');
     })
     .catch(error => {
-        console.error('Error al enviar datos:', error);
-        alert('Los resultados no se pudieron guardar, pero el examen se completó correctamente.');
+        console.error('❌ Error al enviar datos:', error);
+        alert('⚠️ Los resultados no se pudieron guardar, pero el examen se completó correctamente.');
     });
 }
-
 
 
 			// Función para abrir pestañas
