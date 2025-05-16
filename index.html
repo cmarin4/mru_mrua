@@ -924,36 +924,36 @@ function sendResultsToGoogleSheets() {
     const scriptURL = 'https://script.google.com/macros/s/AKfycbymBViHqezqZcaHRs6qS1d2YUs9PWiJwDlOO-VesLXRTOEAL0QcOe5QVcv1yHpN41Fftw/exec';
 
     const now = new Date();
+    const studentNameInput = document.getElementById('studentName');
+    const studentName = studentNameInput ? studentNameInput.value : 'Anónimo';
 
-    // Asegúrate de que estas variables existan
-    const studentName = document.getElementById('studentName').value || 'Anónimo';
-    const score = window.score || 0;
-    const selectedQuestions = window.selectedQuestions || [];
+    // ✅ Asegurarse que existan estas variables globales.
+    const score = typeof window.score !== 'undefined' ? window.score : 0;
+    const selectedQuestions = Array.isArray(window.selectedQuestions) ? window.selectedQuestions : [];
 
-    // Crear el objeto FormData
+    const totalQuestions = selectedQuestions.length > 0 ? selectedQuestions.length : 1; // Evita división por 0
+
+    const puntajeTexto = `${score}/${totalQuestions}`;
+    const porcentajeTexto = `${Math.round((score / totalQuestions) * 100)}%`;
+
     const formData = new FormData();
     formData.append('nombre', studentName);
     formData.append('fecha', now.toLocaleDateString('es-ES'));
     formData.append('hora', now.toLocaleTimeString('es-ES'));
-    formData.append('puntaje', `${score}/${selectedQuestions.length}`);
-    formData.append('porcentaje', `${Math.round((score / selectedQuestions.length) * 100)}%`);
+    formData.append('puntaje', puntajeTexto);
+    formData.append('porcentaje', porcentajeTexto);
 
-    // Enviar datos a Google Sheets vía Apps Script
     fetch(scriptURL, {
         method: 'POST',
+        mode: 'no-cors',
         body: formData
     })
-    .then(response => {
-        if (!response.ok) throw new Error(`Error en la respuesta: ${response.status}`);
-        return response.text();
-    })
-    .then(text => {
-        console.log('Respuesta del servidor:', text);
+    .then(() => {
+        console.log('✅ Resultados enviados (no-cors)');
         alert('✅ Resultados enviados correctamente');
     })
     .catch(error => {
-        console.error('❌ Error al enviar datos:', error);
-        alert('✅ Resultados enviados correctamente');
+        console.error('⚠️ Error al intentar enviar datos (modo no-cors):', error);
     });
 }
 
