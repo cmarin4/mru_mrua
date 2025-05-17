@@ -926,14 +926,10 @@ function sendResultsToGoogleSheets() {
     const now = new Date();
     const studentNameInput = document.getElementById('studentName');
     const studentName = studentNameInput ? studentNameInput.value : 'Anónimo';
+    // ✅ Si tú sabes que son 10 preguntas, lo dejas fijo:
+    const totalQuestions = 10;
 
-    // ✅ Asegurarse que existan estas variables globales.
-    const score = typeof window.score !== 'undefined' ? window.score : 0;
-    const selectedQuestions = Array.isArray(window.selectedQuestions) ? window.selectedQuestions : [];
-
-    const totalQuestions = selectedQuestions.length > 0 ? selectedQuestions.length : 1; // Evita división por 0
-
-    const puntajeTexto = `${score}/${totalQuestions}`;
+const puntajeTexto = `${score}/${totalQuestions}`;
     const porcentajeTexto = `${Math.round((score / totalQuestions) * 100)}%`;
 
     const formData = new FormData();
@@ -949,11 +945,11 @@ function sendResultsToGoogleSheets() {
         body: formData
     })
     .then(() => {
-        console.log('✅ Resultados enviados (no-cors)');
+        console.log('✅ Resultados enviados correctamente');
         alert('✅ Resultados enviados correctamente');
     })
     .catch(error => {
-        console.error('⚠️ Error al intentar enviar datos (modo no-cors):', error);
+        console.error('⚠️ Error al enviar datos:', error);
     });
 }
 
