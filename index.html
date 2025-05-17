@@ -844,17 +844,23 @@ function getRandomQuestions(n) {
 					
 					// Mostrar explicación detallada
 					document.getElementById('result').innerHTML = `
-						<div class="feedback" style="margin: 15px 0; padding: 15px; border-radius: 8px; background-color: ${
-							selectedOption === correctOption ? '#d4edda' : '#f8d7da'
-						}; border-left: 5px solid ${
-							selectedOption === correctOption ? '#28a745' : '#dc3545'
-						};">
-							<p style="font-weight: bold; color: ${
-								selectedOption === correctOption ? '#155724' : '#721c24'
-							};">${selectedOption === correctOption ? '✅ Correcto!' : '❌ Incorrecto'}</p>
-							<p>${selectedQuestions[currentQuestionIndex].explanation}</p>
-						</div>
+					    <div id="feedbackBox" class="feedback" style="margin: 15px 0; padding: 15px; border-radius: 8px; background-color: ${
+					        selectedOption === correctOption ? '#d4edda' : '#f8d7da'
+					    }; border-left: 5px solid ${
+					        selectedOption === correctOption ? '#28a745' : '#dc3545'
+					    };">
+					        <p style="font-weight: bold; color: ${
+					            selectedOption === correctOption ? '#155724' : '#721c24'
+					        };">${selectedOption === correctOption ? '✅ Correcto!' : '❌ Incorrecto'}</p>
+					        <p>${selectedQuestions[currentQuestionIndex].explanation}</p>
+					    </div>
 					`;
+					
+					// Mantener visible 10 segundos
+					setTimeout(() => {
+					    const feedbackBox = document.getElementById('feedbackBox');
+					    if (feedbackBox) feedbackBox.style.display = 'none';
+					}, 4000);  // 10 segundos
 				}
 				
 				// Preparar siguiente pregunta o mostrar resultados
